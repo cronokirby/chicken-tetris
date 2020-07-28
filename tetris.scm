@@ -1,6 +1,23 @@
 (import (prefix sdl2 "sdl2:"))
 (import (chicken time))
 
+;; General gameplay constants
+
+;; How wide each cell is in pixels
+(define CELL-WIDTH 30)
+;; How high each cell is in pixels
+(define CELL-HEIGHT 30)
+;; How many cells the grid is wide
+(define GRID-WIDTH 10)
+;; How many cells the grid is tall
+(define GRID-HEIGHT 20)
+;; How wide the window is in pixels
+(define WINDOW-WIDTH (* CELL-WIDTH GRID-WIDTH))
+;; How tall the window is in pixels
+(define WINDOW-HEIGHT (* CELL-HEIGHT GRID-HEIGHT))
+;; How many milliseconds are in a frame
+(define MS-PER-FRAME (floor (/ 1000 60)))
+
 ;; Representing a grid
 
 ;; Represents an element of the grid
@@ -22,19 +39,18 @@
 (define (grid-at grid x y)
     (vector-ref (grid-elements grid) (_grid-i grid x y)))
 
-;; Modify an element of the grid at a certain position
 (define (_grid-set! grid x y obj)
   (vector-set! (grid-elements grid) (_grid-i grid x y) obj))
 
+;; Fill a specific cell of the grid with a certain color
 (define (grid-set! grid x y color)
   (_grid-set! grid x y (make-cell color)))
 
+;; Clear a specific cell of the grid
 (define (grid-unset! grid x y)
   (_grid-set! grid x y #f))
 
-(define CELL-WIDTH 40)
-(define CELL-HEIGHT 40)
-
+;; Draw a single cell on a surface
 (define (draw-cell! surface x y el)
   (let* ((draw-x (* x CELL-WIDTH))
          (draw-y (* y CELL-HEIGHT))
@@ -70,16 +86,13 @@
     (draw-grid! surface state)
     (sdl2:update-window-surface! window)))
 
+;; Right now there's nothing interesting to do with the updates
 (define (update state) state)
 
-(define MS-PER-FRAME 16.6)
-
+;; Wait the right amount of time based on the time at the start of the loop iteration
 (define (wait-time then now)
   (let ((delta (- (+ then MS-PER-FRAME) now)))
     (if (< delta 0) 0 (floor delta))))
-
-(define GRID-WIDTH 10)
-(define GRID-HEIGHT 20)
 
 ;; Start running the game in a loop until the user quits
 (define (main)
@@ -88,7 +101,7 @@
   ;; to draw pretty pictures onto.
   (sdl2:set-main-ready!)
   (sdl2:init! '(video))
-  (define window (sdl2:create-window! "Hello, World!" 0 0 (* GRID-WIDTH CELL-WIDTH) (* GRID-HEIGHT CELL-HEIGHT)))
+  (define window (sdl2:create-window! "Hello, World!" 0 0 WINDOW-WIDTH WINDOW-HEIGHT))
 
   (define state (grid-new GRID-WIDTH GRID-HEIGHT))
   (grid-set! state 0 0 (rgb 125 0 0))
