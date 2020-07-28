@@ -2,21 +2,22 @@
 (import (chicken time))
 
 ;; Colors
-(define color-blue (sdl2:make-color 0 0 255))
 
-(define (make-color x)
-  (sdl2:make-color 0 x x))
+;; Aliasing this is useful
+(define rgb sdl2:make-color)
 
 ;; This section defines the logic to render the game view
+
+(define (fill-color! surface color)
+  (sdl2:fill-rect! surface #f color))
 
 ;; Render the current state of the game to a window
 ;; Right now there's no state, so we just draw a blue screen on the window
 (define (render! state window)
-  (sdl2:fill-rect!
-    (sdl2:window-surface window)
-    #f
-    (make-color state))
-  (sdl2:update-window-surface! window))
+  (let ((surface (sdl2:window-surface window)))
+    (fill-color! surface (rgb 0 0 0))
+    (sdl2:fill-rect! surface (sdl2:make-rect 100 state 100 200) (rgb 255 0 255))
+    (sdl2:update-window-surface! window)))
 
 (define (update state)
   (remainder (+ state 1) 255))
