@@ -7,6 +7,8 @@
 (define CELL-WIDTH 30)
 ;; How high each cell is in pixels
 (define CELL-HEIGHT 30)
+;; How much space we allow around each cell
+(define CELL-PADDING 4)
 ;; How many cells the grid is wide
 (define GRID-WIDTH 10)
 ;; How many cells the grid is tall
@@ -52,9 +54,11 @@
 
 ;; Draw a single cell on a surface
 (define (draw-cell! surface x y el)
-  (let* ((draw-x (* x CELL-WIDTH))
-         (draw-y (* y CELL-HEIGHT))
-         (rect (sdl2:make-rect draw-x draw-y CELL-WIDTH CELL-HEIGHT))
+  (let* ((draw-x (+ CELL-PADDING (* x CELL-WIDTH)))
+         (draw-y (+ CELL-PADDING (* y CELL-HEIGHT)))
+         (width (- CELL-WIDTH CELL-PADDING))
+         (height (- CELL-HEIGHT CELL-PADDING))
+         (rect (sdl2:make-rect draw-x draw-y width height))
          (color (cell-color el)))
     (sdl2:fill-rect! surface rect color)))
 
@@ -105,6 +109,7 @@
 
   (define state (grid-new GRID-WIDTH GRID-HEIGHT))
   (grid-set! state 0 0 (rgb 125 0 0))
+  (grid-set! state 0 1 (rgb 180 0 0))
   (grid-set! state 1 1 (rgb 0 255 0))
   (grid-set! state 0 2 (rgb 255 0 0))
   (define then (current-milliseconds))
