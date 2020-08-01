@@ -72,6 +72,19 @@
       (let ((el? (grid-at grid x y)))
         (when el? (draw-cell! surface x y el?))))))
 
+;; Stuff related to pieces
+
+;; A point defined by two coordinates
+;; We also perform some abuse of "notation" by using this to represent deltas as well
+(define-record point x y)
+
+;; Add the coordinates of two points together
+(define (point-add p1 p2)
+  (let ((x (+ (point-x p1) (point-x p2)))
+        (y (+ (point-y p1) (point-y p2))))
+    (make-point x y)))
+
+
 ;; Colors
 
 ;; Aliasing this is useful
@@ -125,4 +138,3 @@
         (set! then now))
       (loop))))
 
-(main)
